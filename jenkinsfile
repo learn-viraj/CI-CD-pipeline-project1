@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Code') {
+            steps {
+                git 'https://github.com/<your-username>/ci-cd-jenkins-docker.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t node-cicd-app .'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker rm -f nodeapp || true
+                docker run -d -p 80:3000 --name nodeapp node-cicd-app
+                '''
+            }
+        }
+    }
+}
